@@ -32,26 +32,56 @@ pub fn iterate_over_char_vec() {
     println!("{}", x);
 }
 
-pub fn use_index_map(key: usize) {
+pub fn enumerate_over_char_vec() {
+    let x = vec!["🥹", "😇", "😂", "🥰"]
+        .iter() // iterates over each vector entry
+        .enumerate()
+        .map(|(i, x)| format!("{}{}{}", i.to_string(), x, " ➕")) // adds emoji to each item
+        .collect::<String>(); // concatenates the characters together into one string
 
+    println!("{}", x);
+}
+
+// this is hackier than enumerate() but still works
+pub fn use_index_map(key: usize) {
     // this uses a function from a crate to map over an iterable and still reference the index.
     let mut emojis = IndexMap::new();
 
     emojis.insert("😎");
-    emojis.insert("📦"); 
-    emojis.insert("🦀"); 
-    
+    emojis.insert("📦");
+    emojis.insert("🦀");
+    emojis.insert("");
+
+    // quick way to get a value at index, or return something else if it doesn't exist
+    let x = match emojis.get_key_value(key) {
+        Some(s) => s,
+        None => (0, &"test"),
+    };
+
+    println!("{:#?}", x);
+
+    // check to see if the given key exists
     if emojis.contains_key(key) {
-        let none = "none";
-        let str =  emojis.get_key_value(key);
+        // this check doesn't ensure anything in this example 😭
+        let none = "missing emoji";
+        let str = emojis.get_key_value(key); // this is repetitive in that we still can't be sure this index
+                                             // exists
 
         let no_opt = match str {
-            Some(s) => s,
-            None => {(0, &none)},
+            Some(s) => s,       // if it *does* exist
+            None => (0, &none), // if not 💀
         };
 
         println!("{:#?}", no_opt);
     }
+
+    // yet another way of checking lol
+
+    let str = emojis
+        .get_key_value(key)
+        .or(Some((0, &"or"))) // this was hard, I'm so proud haha
+        .or_else(|| Some((10, &"else"))) // also hard, but easier after understanding or()!
+        .expect("how could you lie to me like this"); // this lets us say "i expect it to exist, but if not, handle it like this."
+
+    println!("{:#?}", str);
 }
-
-

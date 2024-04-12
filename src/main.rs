@@ -9,7 +9,7 @@ mod vars;
 
 mod chapter_four; // this pulls in the "chapter_four" mod via its mod.rs file
 
-use crate::chapter_four::borrowing; // this lets us actually use the packages exported from the module
+// use crate::chapter_four::borrowing; // this lets us actually use the packages exported from the module
 use crate::chapter_four::ownership; // i guess you need one per-file?
 use crate::chapter_four::rust_in_ten; // yep you definitely need one per file lol
 
@@ -38,7 +38,8 @@ fn main() {
     slices::slice_array();
 
     // using imported crates/mods
-    borrowing::hello_from_file();
+    // borrowing::hello_from_file();
+    chapter_four::borrowing::hello_from_file();
 
     ownership::i_own_this();
     ownership::try_to_ref_old_var();
@@ -48,5 +49,6 @@ fn main() {
     rust_in_ten::filter_lowercase();
     rust_in_ten::iterate_over_vec();
     rust_in_ten::iterate_over_char_vec();
-    rust_in_ten::use_index_map(2);
+    rust_in_ten::use_index_map(7);
+    rust_in_ten::enumerate_over_char_vec();
 }
