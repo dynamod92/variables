@@ -49,6 +49,6 @@ fn main() {
     rust_in_ten::filter_lowercase();
     rust_in_ten::iterate_over_vec();
     rust_in_ten::iterate_over_char_vec();
-    rust_in_ten::use_index_map(7);
+    rust_in_ten::use_index_map(3);
     rust_in_ten::enumerate_over_char_vec();
 }

@@ -47,41 +47,61 @@ pub fn use_index_map(key: usize) {
     // this uses a function from a crate to map over an iterable and still reference the index.
     let mut emojis = IndexMap::new();
 
-    emojis.insert("😎");
-    emojis.insert("📦");
-    emojis.insert("🦀");
-    emojis.insert("");
+    let word = &"test".to_string();
+
+    emojis.insert("😎".to_string());
+    emojis.insert("📦".to_string());
+    emojis.insert("🦀".to_string());
 
     // quick way to get a value at index, or return something else if it doesn't exist
     let x = match emojis.get_key_value(key) {
-        Some(s) => s,
-        None => (0, &"test"),
+        Some(s) => Some((s.0, s.1.to_owned())),
+        None => Some((0, word.to_owned())),
     };
 
-    println!("{:#?}", x);
+    println!("Doing a match: {:?}", x);
 
-    // check to see if the given key exists
+    // this check doesn't ensure anything like it would in TS 😭, so it's better to omit it entirely.
+    // I'm leaving it here though with this note to remind myself as I will definitely forget
+    // in the future.
     if emojis.contains_key(key) {
-        // this check doesn't ensure anything in this example 😭
-        let none = "missing emoji";
+        let none = "missing emoji".to_string();
         let str = emojis.get_key_value(key); // this is repetitive in that we still can't be sure this index
                                              // exists
 
         let no_opt = match str {
-            Some(s) => s,       // if it *does* exist
-            None => (0, &none), // if not 💀
+            Some(s) => (s.0, s.1.to_owned()), // if it *does* exist
+            None => (0, none),                // if not 💀
         };
 
         println!("{:#?}", no_opt);
     }
 
-    // yet another way of checking lol
+    // This looks wild, right?
+    // This function accepts a pointer to a borrowed map (emojis) as well as a new emoji to add to it.
+    // Once they're added to the map, it returns the value it just added
+    fn update_emojis(map: &mut IndexMap<String>, word: &str) -> Option<(usize, String)> {
+        // add the new item to the map
+        let last_index = map.insert(word.to_string());
+        println!("adding new value: {:?}", new_item);
+
+        // fetch the newly created item, and unwrap it to get the values
+        let new_item = map.get_key_value(last_index).unwrap();
+        
+        // return the newly created item, but with the unborrowed map value
+        Some((new_item.0, new_item.1.to_owned()))
+    }
 
     let str = emojis
         .get_key_value(key)
-        .or(Some((0, &"or"))) // this was hard, I'm so proud haha
-        .or_else(|| Some((10, &"else"))) // also hard, but easier after understanding or()!
-        .expect("how could you lie to me like this"); // this lets us say "i expect it to exist, but if not, handle it like this."
+        .and_then(|x| Some((x.0, x.1.to_owned())))
+        // .or(Some((0, "or".to_string()))) // this was hard, I'm so proud haha
+        .or_else(|| {
+            // update the map to include the text
+            update_emojis(&mut emojis, "🔥")
+        }) // also hard, but easier after understanding or()!
+        .expect("how could you not know!?"); // this lets us say "i expect one of the "or" or "or_else" backups
+                                             // to handle it if it doesn't exist, but if not, handle it like this."
 
-    println!("{:#?}", str);
+    println!("fetching emoji from map: {:?}", str);
 }
